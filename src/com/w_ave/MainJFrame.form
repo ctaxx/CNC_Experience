@@ -25,9 +25,15 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
-              <Component id="LeftJButton" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="100" max="32767" attributes="0"/>
-              <Component id="StopJButton" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="LeftJButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="setStepsJButton" alignment="0" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace pref="74" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="stepsJTextField" max="32767" attributes="0"/>
+                  <Component id="StopJButton" max="32767" attributes="0"/>
+              </Group>
               <EmptySpace min="-2" pref="108" max="-2" attributes="0"/>
               <Component id="RightJButton" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -43,7 +49,12 @@
                   <Component id="StopJButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="RightJButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="158" max="32767" attributes="0"/>
+              <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="setStepsJButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="stepsJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace pref="71" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -72,6 +83,19 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="RightJButtonActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="setStepsJButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Set steps"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="setStepsJButtonActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="stepsJTextField">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="8"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

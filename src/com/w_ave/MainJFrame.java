@@ -31,6 +31,8 @@ public class MainJFrame extends javax.swing.JFrame {
         LeftJButton = new javax.swing.JButton();
         StopJButton = new javax.swing.JButton();
         RightJButton = new javax.swing.JButton();
+        setStepsJButton = new javax.swing.JButton();
+        stepsJTextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -55,15 +57,28 @@ public class MainJFrame extends javax.swing.JFrame {
             }
         });
 
+        setStepsJButton.setText("Set steps");
+        setStepsJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setStepsJButtonActionPerformed(evt);
+            }
+        });
+
+        stepsJTextField.setText("8");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(19, 19, 19)
-                .addComponent(LeftJButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
-                .addComponent(StopJButton)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(LeftJButton)
+                    .addComponent(setStepsJButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(stepsJTextField)
+                    .addComponent(StopJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(108, 108, 108)
                 .addComponent(RightJButton)
                 .addContainerGap())
@@ -76,7 +91,11 @@ public class MainJFrame extends javax.swing.JFrame {
                     .addComponent(LeftJButton)
                     .addComponent(StopJButton)
                     .addComponent(RightJButton))
-                .addContainerGap(158, Short.MAX_VALUE))
+                .addGap(64, 64, 64)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(setStepsJButton)
+                    .addComponent(stepsJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(71, Short.MAX_VALUE))
         );
 
         pack();
@@ -93,6 +112,10 @@ public class MainJFrame extends javax.swing.JFrame {
     private void RightJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RightJButtonActionPerformed
         CommPortSender.send(new ProtocolImpl().getMessage("g"));
     }//GEN-LAST:event_RightJButtonActionPerformed
+
+    private void setStepsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setStepsJButtonActionPerformed
+        CommPortSender.send(new ProtocolImpl().getMessage("x"+stepsJTextField.getText()));
+    }//GEN-LAST:event_setStepsJButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -136,5 +159,7 @@ public class MainJFrame extends javax.swing.JFrame {
     private javax.swing.JButton LeftJButton;
     private javax.swing.JButton RightJButton;
     private javax.swing.JButton StopJButton;
+    private javax.swing.JButton setStepsJButton;
+    private javax.swing.JTextField stepsJTextField;
     // End of variables declaration//GEN-END:variables
 }
