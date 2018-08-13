@@ -3,29 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.w_ave;
-
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
-import javax.swing.JButton;
-import javax.swing.JDesktopPane;
-import static javax.swing.JFrame.EXIT_ON_CLOSE;
-import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
-import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 /**
  *
  * @author Bykov_SP
  */
-public class CNCFrame extends javax.swing.JFrame{
+public class CNCFrame extends javax.swing.JFrame {
 
-//    JInternalFrame toolOffsetFrame;
-//    JInternalFrame mainInnerFrame, programFrame, wrkOffsetFrame;
-    
+    int listPointer = 0;
+    Character[] symbols = {'N', 'G', 'M', 'X', 'Y', 'Z'};
+    double currentX, prevX;
+
     /**
      * Creates new form ParentJFrame
      */
@@ -34,97 +23,7 @@ public class CNCFrame extends javax.swing.JFrame{
         super("SimpleMDI");
         setSize(500, 400);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        
-//        setLayout(new BorderLayout());
-//        JPanel downPanel = new JPanel();
-//        
-//        JButton mainFrameButton = new JButton("CNC");
-//        mainFrameButton.addActionListener(new ActionListener() {
-//
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                mainInnerFrame.moveToFront();
-//            }
-//        });
-//              
-//        downPanel.add(mainFrameButton);
-//        
-//        JButton programButton = new JButton("Progs");
-//        programButton.addActionListener(new ActionListener() {
-//
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                programFrame.moveToFront();
-//            }
-//        });
-//        
-//        downPanel.add(programButton);
-//        
-//        JButton toolOffsetButton = new JButton("tool offset");
-//        toolOffsetButton.addActionListener(new ActionListener() {
-//
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                toolOffsetFrame.moveToFront();
-//            }
-//        });
-//        downPanel.add(toolOffsetButton);
-//        
-//        JButton wrkOffsetButton = new JButton("wrk offset");
-//        wrkOffsetButton.addActionListener(new ActionListener() {
-//
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                wrkOffsetFrame.moveToFront();
-//            }
-//        });
-//        downPanel.add(wrkOffsetButton);
-//        
-//        add(downPanel, BorderLayout.SOUTH);
-//        // создаем рабочий стол Swing
-//        JDesktopPane desktopPane = new JDesktopPane();
-//
-//        // добавляем его в центр окна
-//        add(desktopPane);
-//
-//        // создаем несколько внутренних окон, применяя доступные конструкторы
-//        mainInnerFrame = new JInternalFrame("CNC", false);
-//        mainInnerFrame.setLayout(new BorderLayout());
-//        
-//        toolOffsetFrame = new JInternalFrame("tool offset");
-//        programFrame = new JInternalFrame("Programs");
-//        wrkOffsetFrame = new JInternalFrame("wrk offset");
-//
-//        // добавляем внутренние окна на рабочий стол
-//        desktopPane.add(toolOffsetFrame);
-//        desktopPane.add(programFrame);
-//        desktopPane.add(wrkOffsetFrame);
-//        desktopPane.add(mainInnerFrame);
-//
-//        // задаем размеры и расположения, делаем окна видимыми
-//        mainInnerFrame.setSize(490, 310);
-//        mainInnerFrame.setLocation(0, 0);
-//        
-//        toolOffsetFrame.setSize(490, 310);
-//        toolOffsetFrame.setLocation(0, 0);
-//        
-//        programFrame.setSize(490, 310);
-//        programFrame.setLocation(0, 0);
-//        
-//        wrkOffsetFrame.setSize(490, 310);
-//        wrkOffsetFrame.setLocation(0, 0);
-//        
-//        //remove the listeners from UI which make the frame move
-//        BasicInternalFrameUI basicInternalFrameUI = ((javax.swing.plaf.basic.BasicInternalFrameUI) mainInnerFrame.getUI());
-//            for (MouseListener listener : basicInternalFrameUI.getNorthPane().getMouseListeners()) {
-//                basicInternalFrameUI.getNorthPane().removeMouseListener(listener);
-//            }     
-//        mainInnerFrame.setVisible(true);
-//        toolOffsetFrame.setVisible(true);
-//        programFrame.setVisible(true);
-//        wrkOffsetFrame.setVisible(true);
-//        mainInnerFrame.moveToFront();
-        
+
         initComponents();
     }
 
@@ -146,6 +45,7 @@ public class CNCFrame extends javax.swing.JFrame{
         mainInnerFrame = new javax.swing.JInternalFrame("CNC");
         gCodeListScroll = new javax.swing.JScrollPane();
         gCodeList = new javax.swing.JList();
+        jButton1 = new javax.swing.JButton();
         programFrame = new javax.swing.JInternalFrame("Programs");
         toolsOffsetFrame = new javax.swing.JInternalFrame("tools offset");
         wrkOffsetFrame = new javax.swing.JInternalFrame("wrk offset");
@@ -212,11 +112,18 @@ public class CNCFrame extends javax.swing.JFrame{
         mainInnerFrame.setVisible(true);
 
         gCodeList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "x-1. y5.", "x3. y0.", "x10." };
+            String[] strings = { "x-1.\\n", "x3.\\n", "x10.\\n" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
         gCodeListScroll.setViewportView(gCodeList);
+
+        jButton1.setText("jButton1");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout mainInnerFrameLayout = new javax.swing.GroupLayout(mainInnerFrame.getContentPane());
         mainInnerFrame.getContentPane().setLayout(mainInnerFrameLayout);
@@ -224,13 +131,19 @@ public class CNCFrame extends javax.swing.JFrame{
             mainInnerFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainInnerFrameLayout.createSequentialGroup()
                 .addComponent(gCodeListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(76, 76, 76)
+                .addComponent(jButton1)
+                .addContainerGap(338, Short.MAX_VALUE))
         );
         mainInnerFrameLayout.setVerticalGroup(
             mainInnerFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainInnerFrameLayout.createSequentialGroup()
                 .addGap(0, 160, Short.MAX_VALUE)
                 .addComponent(gCodeListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainInnerFrameLayout.createSequentialGroup()
+                .addContainerGap(231, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addGap(147, 147, 147))
         );
 
         programFrame.setVisible(true);
@@ -333,14 +246,16 @@ public class CNCFrame extends javax.swing.JFrame{
         wrkOffsetFrame.moveToFront();
     }//GEN-LAST:event_wrkOffsetButtonActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        parseFrame();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
-    
 //    private void wrkOffsetButtonActionPerformed(java.awt.event.ActionEvent evt) {                                             
 //        CommPortSender.send(new ProtocolImpl().getMessage("g"));
 //    }
-    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -371,11 +286,40 @@ public class CNCFrame extends javax.swing.JFrame{
                 new CNCFrame().setVisible(true);
             }
         });
+
+        Thread waitingForRequests = new Thread(new TaskForWaiting());
+    }
+    
+    private void parseFrame(){
+        double deltaX;
+        if (listPointer < gCodeList.getModel().getSize()) {
+            prevX = currentX;
+            String frame = (String) gCodeList.getModel().getElementAt(listPointer);
+            gCodeList.setSelectedIndex(listPointer);
+            currentX = parseAxis('x', frame);
+            deltaX = currentX - prevX;
+            listPointer++;
+        }
+    }
+
+    private double parseAxis(char ch, String frame) {
+        double axisValue = 0;
+        int point = frame.indexOf(ch);
+        if (point != -1) {
+            for (int i = point + 1; i < frame.length(); i++) {
+                if (Character.isLetter(frame.charAt(i))) {
+                    axisValue = Double.parseDouble(frame.substring(point + 1, i - 1));
+                    break;
+                }
+            }
+        }
+        return axisValue;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList gCodeList;
     private javax.swing.JScrollPane gCodeListScroll;
+    private javax.swing.JButton jButton1;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton mainFrameButton;
