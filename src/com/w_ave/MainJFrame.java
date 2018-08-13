@@ -6,6 +6,15 @@
 
 package com.w_ave;
 
+import java.awt.BorderLayout;
+import java.awt.event.MouseListener;
+import javax.swing.JButton;
+import javax.swing.JDesktopPane;
+import static javax.swing.JFrame.EXIT_ON_CLOSE;
+import javax.swing.JInternalFrame;
+import javax.swing.JPanel;
+import javax.swing.plaf.basic.BasicInternalFrameUI;
+
 /**
  *
  * @author bykov_s_p
@@ -16,6 +25,9 @@ public class MainJFrame extends javax.swing.JFrame {
      * Creates new form NewJFrame
      */
     public MainJFrame() {
+        
+       
+        
         initComponents();
     }
 
@@ -102,19 +114,19 @@ public class MainJFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void LeftJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LeftJButtonActionPerformed
-        CommPortSender.send(new ProtocolImpl().getMessage("f"));
+//        CommPortSender.send(new ProtocolImpl().getMessage("f"));
     }//GEN-LAST:event_LeftJButtonActionPerformed
 
     private void StopJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StopJButtonActionPerformed
-        CommPortSender.send(new ProtocolImpl().getMessage("d"));
+//        CommPortSender.send(new ProtocolImpl().getMessage("d"));
     }//GEN-LAST:event_StopJButtonActionPerformed
 
     private void RightJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RightJButtonActionPerformed
-        CommPortSender.send(new ProtocolImpl().getMessage("g"));
+//        CommPortSender.send(new ProtocolImpl().getMessage("g"));
     }//GEN-LAST:event_RightJButtonActionPerformed
 
     private void setStepsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setStepsJButtonActionPerformed
-        CommPortSender.send(new ProtocolImpl().getMessage("x"+stepsJTextField.getText()));
+//        CommPortSender.send(new ProtocolImpl().getMessage("x"+stepsJTextField.getText()));
     }//GEN-LAST:event_setStepsJButtonActionPerformed
 
     /**

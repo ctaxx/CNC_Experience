@@ -38,9 +38,9 @@ public class RS232example {
    
             // setup serial port writer  
             CommPortSender.setWriterStream(serialPort.getOutputStream());  
-              
+                     
             // setup serial port reader  
-//            new CommPortReceiver(serialPort.getInputStream()).start();  
+//         new CommPortReceiver(serialPort.getInputStream()).start();  
         }  
     } 
 }
