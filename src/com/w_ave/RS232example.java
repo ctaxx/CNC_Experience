@@ -40,7 +40,7 @@ public class RS232example {
             CommPortSender.setWriterStream(serialPort.getOutputStream());  
                      
             // setup serial port reader  
-//         new CommPortReceiver(serialPort.getInputStream()).start();  
+         new CommPortReceiver(serialPort.getInputStream()).start();  
         }  
     } 
 }

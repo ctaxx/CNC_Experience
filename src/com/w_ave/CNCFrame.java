@@ -287,7 +287,7 @@ public class CNCFrame extends javax.swing.JFrame {
             }
         });
 
-        Thread waitingForRequests = new Thread(new TaskForWaiting());
+        Thread waitingForRequests = new Thread(new RequestReceiver());
     }
     
     private void parseFrame(){
@@ -315,6 +315,10 @@ public class CNCFrame extends javax.swing.JFrame {
         }
         return axisValue;
     }
+    
+    private void sendData(){
+        
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList gCodeList;
@@ -331,5 +335,16 @@ public class CNCFrame extends javax.swing.JFrame {
     private javax.swing.JButton wrkOffsetButton;
     private javax.swing.JInternalFrame wrkOffsetFrame;
     // End of variables declaration//GEN-END:variables
+
+    private static class RequestReceiver implements Runnable {
+
+        public RequestReceiver() {
+        }
+
+        @Override
+        public void run() {
+            
+        }
+    }
 
 }

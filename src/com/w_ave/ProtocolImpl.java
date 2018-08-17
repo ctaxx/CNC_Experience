@@ -52,7 +52,7 @@ class ProtocolImpl implements Protocol{
       
     // helper methods   
     public byte[] getMessage(String message) {  
-//        return (message+"\n").getBytes();  
+//        return (message+"\n").getBytes();
         return (message).getBytes();
     }  
       
