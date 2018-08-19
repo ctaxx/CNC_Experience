@@ -5,6 +5,9 @@
  */
 package com.w_ave;
 
+import java.util.ArrayList;
+import javax.swing.DefaultListModel;
+
 /**
  *
  * @author Bykov_SP
@@ -108,11 +111,6 @@ public class CNCFrame extends javax.swing.JFrame {
 
         mainInnerFrame.setVisible(true);
 
-        gCodeList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "x-1.\\n", "x3.\\n", "x10.\\n" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         gCodeListScroll.setViewportView(gCodeList);
 
         javax.swing.GroupLayout mainInnerFrameLayout = new javax.swing.GroupLayout(mainInnerFrame.getContentPane());
@@ -276,6 +274,14 @@ public class CNCFrame extends javax.swing.JFrame {
     
     public void setSelectedIndexToList(int index){
         gCodeList.setSelectedIndex(index);
+    }
+    
+    public void setProgramToList(ArrayList<String> program){
+        DefaultListModel<String> model = new DefaultListModel();
+        gCodeList.setModel(model);
+        for (String s: program){
+            model.addElement(s);
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
