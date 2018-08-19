@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.w_ave;
+package com.w_ave.example;
 
 /**
  *

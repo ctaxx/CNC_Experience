@@ -13,11 +13,11 @@ import java.io.OutputStream;
  *
  * @author bykov_s_p
  */
-class CommPortSender {
+public class ComPortSender {
     static OutputStream out;  
       
     public static void setWriterStream(OutputStream out) {  
-        CommPortSender.out = out;  
+        ComPortSender.out = out;  
     }  
       
     public static void send(byte[] bytes) {  

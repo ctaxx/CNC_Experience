@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.w_ave;
+package com.w_ave.example;
 
 import java.io.IOException;
 import java.io.InputStream;

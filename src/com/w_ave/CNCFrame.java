@@ -11,10 +11,6 @@ package com.w_ave;
  */
 public class CNCFrame extends javax.swing.JFrame {
 
-    int listPointer = 0;
-    Character[] symbols = {'N', 'G', 'M', 'X', 'Y', 'Z'};
-    double currentX, prevX;
-
     /**
      * Creates new form ParentJFrame
      */
@@ -23,6 +19,8 @@ public class CNCFrame extends javax.swing.JFrame {
         super("SimpleMDI");
         setSize(500, 400);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        
+        setVisible(true);
 
         initComponents();
     }
@@ -45,7 +43,6 @@ public class CNCFrame extends javax.swing.JFrame {
         mainInnerFrame = new javax.swing.JInternalFrame("CNC");
         gCodeListScroll = new javax.swing.JScrollPane();
         gCodeList = new javax.swing.JList();
-        jButton1 = new javax.swing.JButton();
         programFrame = new javax.swing.JInternalFrame("Programs");
         toolsOffsetFrame = new javax.swing.JInternalFrame("tools offset");
         wrkOffsetFrame = new javax.swing.JInternalFrame("wrk offset");
@@ -118,32 +115,19 @@ public class CNCFrame extends javax.swing.JFrame {
         });
         gCodeListScroll.setViewportView(gCodeList);
 
-        jButton1.setText("jButton1");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout mainInnerFrameLayout = new javax.swing.GroupLayout(mainInnerFrame.getContentPane());
         mainInnerFrame.getContentPane().setLayout(mainInnerFrameLayout);
         mainInnerFrameLayout.setHorizontalGroup(
             mainInnerFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainInnerFrameLayout.createSequentialGroup()
                 .addComponent(gCodeListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(76, 76, 76)
-                .addComponent(jButton1)
-                .addContainerGap(338, Short.MAX_VALUE))
+                .addContainerGap(487, Short.MAX_VALUE))
         );
         mainInnerFrameLayout.setVerticalGroup(
             mainInnerFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainInnerFrameLayout.createSequentialGroup()
-                .addGap(0, 160, Short.MAX_VALUE)
+                .addGap(0, 168, Short.MAX_VALUE)
                 .addComponent(gCodeListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainInnerFrameLayout.createSequentialGroup()
-                .addContainerGap(231, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(147, 147, 147))
         );
 
         programFrame.setVisible(true);
@@ -246,10 +230,6 @@ public class CNCFrame extends javax.swing.JFrame {
         wrkOffsetFrame.moveToFront();
     }//GEN-LAST:event_wrkOffsetButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        parseFrame();
-    }//GEN-LAST:event_jButton1ActionPerformed
-
     /**
      * @param args the command line arguments
      */
@@ -287,43 +267,20 @@ public class CNCFrame extends javax.swing.JFrame {
             }
         });
 
-        Thread waitingForRequests = new Thread(new RequestReceiver());
     }
     
-    private void parseFrame(){
-        double deltaX;
-        if (listPointer < gCodeList.getModel().getSize()) {
-            prevX = currentX;
-            String frame = (String) gCodeList.getModel().getElementAt(listPointer);
-            gCodeList.setSelectedIndex(listPointer);
-            currentX = parseAxis('x', frame);
-            deltaX = currentX - prevX;
-            listPointer++;
-        }
-    }
-
-    private double parseAxis(char ch, String frame) {
-        double axisValue = 0;
-        int point = frame.indexOf(ch);
-        if (point != -1) {
-            for (int i = point + 1; i < frame.length(); i++) {
-                if (Character.isLetter(frame.charAt(i))) {
-                    axisValue = Double.parseDouble(frame.substring(point + 1, i - 1));
-                    break;
-                }
-            }
-        }
-        return axisValue;
+    // temporary
+    public String getCurrentFrameFromGList(int index){
+        return (String) gCodeList.getModel().getElementAt(index);
     }
     
-    private void sendData(){
-        
+    public void setSelectedIndexToList(int index){
+        gCodeList.setSelectedIndex(index);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList gCodeList;
     private javax.swing.JScrollPane gCodeListScroll;
-    private javax.swing.JButton jButton1;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JButton mainFrameButton;
@@ -335,16 +292,5 @@ public class CNCFrame extends javax.swing.JFrame {
     private javax.swing.JButton wrkOffsetButton;
     private javax.swing.JInternalFrame wrkOffsetFrame;
     // End of variables declaration//GEN-END:variables
-
-    private static class RequestReceiver implements Runnable {
-
-        public RequestReceiver() {
-        }
-
-        @Override
-        public void run() {
-            
-        }
-    }
 
 }
