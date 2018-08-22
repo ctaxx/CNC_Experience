@@ -25,9 +25,11 @@ import java.util.logging.Logger;
  */
 public class CNCKernel {
 
-    private static String INPUT_PATH = "d:/prog.mpf";
+    private static String INPUT_PATH = "d:/CNC_root/Programs/prog.mpf";
 
     CNCFrame cncFrame;
+    
+    ArrayList programsList;
 
     int listPointer = 0;
     Character[] symbols = {'N', 'G', 'M', 'X', 'Y', 'Z'};
@@ -36,6 +38,7 @@ public class CNCKernel {
     double currentX, prevX, ostX;
 
     public CNCKernel() {
+        programsList = filing(new File("d:/CNC_root/Programs"));
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -63,6 +66,7 @@ public class CNCKernel {
                 //</editor-fold>
                 cncFrame = new CNCFrame();
                 cncFrame.setProgramToList(prog);
+                cncFrame.setProgramsToList(programsList);
             }
         });
         
@@ -72,7 +76,7 @@ public class CNCKernel {
     public static void main(String[] args) {
 
         CNCKernel kernel = new CNCKernel();
-
+        
         try {
             kernel.connect("COM3");
         } catch (Exception ex) {
@@ -208,7 +212,6 @@ public class CNCKernel {
                 // message interpreter class not here  
                 if (stringBuffer.charAt(0) == '?') {
                     if (listPointer < prog.size()) {
-//                        System.out.println("listPointer is " + listPointer);
                         ComPortSender.send(getMessage(parseFrame(prog.get(listPointer))));
                         listPointer++;
                     }
@@ -242,6 +245,17 @@ public class CNCKernel {
                 e.printStackTrace();
             }
         }
+    }
+    
+    public ArrayList<String> filing(File f){
+        ArrayList<String> filesList = new ArrayList();
+        File [] files = f.listFiles();
+        for(File file: files){
+            filesList.add(file.getName());
+        }        
+        return filesList;
+       
+
     }
 
 }

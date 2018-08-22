@@ -47,6 +47,8 @@ public class CNCFrame extends javax.swing.JFrame {
         gCodeListScroll = new javax.swing.JScrollPane();
         gCodeList = new javax.swing.JList();
         programFrame = new javax.swing.JInternalFrame("Programs");
+        programsListScroll = new javax.swing.JScrollPane();
+        programsList = new javax.swing.JList();
         toolsOffsetFrame = new javax.swing.JInternalFrame("tools offset");
         wrkOffsetFrame = new javax.swing.JInternalFrame("wrk offset");
 
@@ -124,21 +126,38 @@ public class CNCFrame extends javax.swing.JFrame {
         mainInnerFrameLayout.setVerticalGroup(
             mainInnerFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainInnerFrameLayout.createSequentialGroup()
-                .addGap(0, 168, Short.MAX_VALUE)
+                .addGap(0, 172, Short.MAX_VALUE)
                 .addComponent(gCodeListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         programFrame.setVisible(true);
 
+        programsList.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        programsListScroll.setViewportView(programsList);
+
         javax.swing.GroupLayout programFrameLayout = new javax.swing.GroupLayout(programFrame.getContentPane());
         programFrame.getContentPane().setLayout(programFrameLayout);
         programFrameLayout.setHorizontalGroup(
             programFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 708, Short.MAX_VALUE)
+            .addGroup(programFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(programFrameLayout.createSequentialGroup()
+                    .addGap(41, 41, 41)
+                    .addComponent(programsListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(310, Short.MAX_VALUE)))
         );
         programFrameLayout.setVerticalGroup(
             programFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 397, Short.MAX_VALUE)
+            .addGap(0, 409, Short.MAX_VALUE)
+            .addGroup(programFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(programFrameLayout.createSequentialGroup()
+                    .addGap(139, 139, 139)
+                    .addComponent(programsListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(55, Short.MAX_VALUE)))
         );
 
         toolsOffsetFrame.setVisible(true);
@@ -283,7 +302,15 @@ public class CNCFrame extends javax.swing.JFrame {
             model.addElement(s);
         }
     }
-
+    
+    public void setProgramsToList(ArrayList<String> programs){
+        DefaultListModel<String> model = new DefaultListModel();
+        programsList.setModel(model);
+        for (String s: programs){
+            model.addElement(s);
+        }
+    }
+   
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList gCodeList;
     private javax.swing.JScrollPane gCodeListScroll;
@@ -293,6 +320,8 @@ public class CNCFrame extends javax.swing.JFrame {
     private javax.swing.JInternalFrame mainInnerFrame;
     private javax.swing.JButton programButton;
     private javax.swing.JInternalFrame programFrame;
+    private javax.swing.JList programsList;
+    private javax.swing.JScrollPane programsListScroll;
     private javax.swing.JButton toolsOffsetButton;
     private javax.swing.JInternalFrame toolsOffsetFrame;
     private javax.swing.JButton wrkOffsetButton;
