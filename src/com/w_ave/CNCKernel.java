@@ -7,13 +7,10 @@ package com.w_ave;
 
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -24,21 +21,24 @@ import java.util.logging.Logger;
  * @author bykov_s_p
  */
 public class CNCKernel {
-
-    private static String INPUT_PATH = "d:/CNC_root/Programs/prog.mpf";
+// deprecated
+    private static String INPUT_FILE = "prog.mpf";
+    private static String ROOT_PATH = "d:/CNC_root/Programs/";
 
     CNCFrame cncFrame;
-    
+
     ArrayList programsList;
 
     int listPointer = 0;
     Character[] symbols = {'N', 'G', 'M', 'X', 'Y', 'Z'};
 //    String[] program = {"x-1.", "x3.", "x-10."};
-    ArrayList<String> prog = new ArrayList();
+    ArrayList<String> prog;
     double currentX, prevX, ostX;
 
     public CNCKernel() {
-        programsList = filing(new File("d:/CNC_root/Programs"));
+        programsList = fillListOfFiles(new File(ROOT_PATH));
+        this.prog = prepareProgram(INPUT_FILE);
+        CNCKernel kernel = this;
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -67,16 +67,15 @@ public class CNCKernel {
                 cncFrame = new CNCFrame();
                 cncFrame.setProgramToList(prog);
                 cncFrame.setProgramsToList(programsList);
+                cncFrame.addObserverForPrograms(kernel);
             }
         });
-        
-        this.prog = prepareProgram();
     }
 
     public static void main(String[] args) {
 
         CNCKernel kernel = new CNCKernel();
-        
+
         try {
             kernel.connect("COM3");
         } catch (Exception ex) {
@@ -105,9 +104,9 @@ public class CNCKernel {
         }
     }
 
-    private ArrayList<String> prepareProgram() {
-        File inputFile = new File(INPUT_PATH);
-        ArrayList<String> array = new ArrayList<String>();
+    private ArrayList<String> prepareProgram(String nameOfSelectedFile) {
+        File inputFile = new File(ROOT_PATH + nameOfSelectedFile);
+        ArrayList<String> array = new ArrayList<>();
         StringBuilder stringBuilder = new StringBuilder();
 
         try {
@@ -117,16 +116,16 @@ public class CNCKernel {
                 if (c == '\n') {
                     array.add(stringBuilder.toString());
                     stringBuilder = new StringBuilder();
-                }else{
+                } else {
                     stringBuilder.append((char) c);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        for (String s : prog) {
-            System.out.println(s);
-        }
+//        for (String s : array) {
+//            System.out.println(s);
+//        }
         return array;
     }
 
@@ -176,6 +175,13 @@ public class CNCKernel {
 
     private String prepareAuxiliaryFuncTask(char ch, int value) {
         return null;
+    }
+
+    public void onProgramChoosed(String programName) {
+        System.out.println("program was changed");
+        System.out.println(programName);
+        this.prog = prepareProgram(programName);
+        cncFrame.setProgramToList(prog);
     }
 
     private class ComPortReceiver extends Thread {
@@ -246,16 +252,14 @@ public class CNCKernel {
             }
         }
     }
-    
-    public ArrayList<String> filing(File f){
-        ArrayList<String> filesList = new ArrayList();
-        File [] files = f.listFiles();
-        for(File file: files){
-            filesList.add(file.getName());
-        }        
-        return filesList;
-       
 
+    public ArrayList<String> fillListOfFiles(File f) {
+        ArrayList<String> filesList = new ArrayList();
+        File[] files = f.listFiles();
+        for (File file : files) {
+            filesList.add(file.getName());
+        }
+        return filesList;
     }
 
 }

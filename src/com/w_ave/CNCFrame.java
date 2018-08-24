@@ -13,14 +13,14 @@ import javax.swing.DefaultListModel;
  * @author Bykov_SP
  */
 public class CNCFrame extends javax.swing.JFrame {
-
+    private CNCKernel kernel;
+    
     /**
      * Creates new form ParentJFrame
      */
     public CNCFrame() {
-//        initComponents();
         super("SimpleMDI");
-        setSize(500, 400);
+//        setSize(500, 400);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         
         setVisible(true);
@@ -47,6 +47,7 @@ public class CNCFrame extends javax.swing.JFrame {
         gCodeListScroll = new javax.swing.JScrollPane();
         gCodeList = new javax.swing.JList();
         programFrame = new javax.swing.JInternalFrame("Programs");
+        OpenProgramsButton = new javax.swing.JButton();
         programsListScroll = new javax.swing.JScrollPane();
         programsList = new javax.swing.JList();
         toolsOffsetFrame = new javax.swing.JInternalFrame("tools offset");
@@ -126,11 +127,18 @@ public class CNCFrame extends javax.swing.JFrame {
         mainInnerFrameLayout.setVerticalGroup(
             mainInnerFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainInnerFrameLayout.createSequentialGroup()
-                .addGap(0, 172, Short.MAX_VALUE)
+                .addGap(0, 180, Short.MAX_VALUE)
                 .addComponent(gCodeListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         programFrame.setVisible(true);
+
+        OpenProgramsButton.setText("Select");
+        OpenProgramsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                OpenProgramsButtonActionPerformed(evt);
+            }
+        });
 
         programsList.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -149,15 +157,25 @@ public class CNCFrame extends javax.swing.JFrame {
                     .addGap(41, 41, 41)
                     .addComponent(programsListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addContainerGap(310, Short.MAX_VALUE)))
+            .addGroup(programFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(programFrameLayout.createSequentialGroup()
+                    .addGap(404, 404, 404)
+                    .addComponent(OpenProgramsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(222, Short.MAX_VALUE)))
         );
         programFrameLayout.setVerticalGroup(
             programFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 409, Short.MAX_VALUE)
+            .addGap(0, 417, Short.MAX_VALUE)
             .addGroup(programFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(programFrameLayout.createSequentialGroup()
                     .addGap(139, 139, 139)
                     .addComponent(programsListScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addContainerGap(55, Short.MAX_VALUE)))
+            .addGroup(programFrameLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(programFrameLayout.createSequentialGroup()
+                    .addGap(115, 115, 115)
+                    .addComponent(OpenProgramsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(269, Short.MAX_VALUE)))
         );
 
         toolsOffsetFrame.setVisible(true);
@@ -192,7 +210,7 @@ public class CNCFrame extends javax.swing.JFrame {
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(programFrame, javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(mainInnerFrame, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addComponent(mainInnerFrame, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(toolsOffsetFrame, javax.swing.GroupLayout.Alignment.TRAILING))
             .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -202,7 +220,7 @@ public class CNCFrame extends javax.swing.JFrame {
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(programFrame)
             .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(mainInnerFrame, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addComponent(mainInnerFrame, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(toolsOffsetFrame, javax.swing.GroupLayout.Alignment.TRAILING))
             .addGroup(jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -247,6 +265,10 @@ public class CNCFrame extends javax.swing.JFrame {
         wrkOffsetFrame.moveToFront();
     }//GEN-LAST:event_wrkOffsetButtonActionPerformed
 
+    private void OpenProgramsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OpenProgramsButtonActionPerformed
+        kernel.onProgramChoosed((String)programsList.getSelectedValue());
+    }//GEN-LAST:event_OpenProgramsButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -283,13 +305,13 @@ public class CNCFrame extends javax.swing.JFrame {
                 new CNCFrame().setVisible(true);
             }
         });
-
+        
     }
     
     // temporary
-    public String getCurrentFrameFromGList(int index){
-        return (String) gCodeList.getModel().getElementAt(index);
-    }
+//    public String getCurrentFrameFromGList(int index){
+//        return (String) gCodeList.getModel().getElementAt(index);
+//    }
     
     public void setSelectedIndexToList(int index){
         gCodeList.setSelectedIndex(index);
@@ -304,14 +326,20 @@ public class CNCFrame extends javax.swing.JFrame {
     }
     
     public void setProgramsToList(ArrayList<String> programs){
+        System.out.println("setting prog");
         DefaultListModel<String> model = new DefaultListModel();
         programsList.setModel(model);
         for (String s: programs){
             model.addElement(s);
         }
     }
-   
+    
+    public void addObserverForPrograms(CNCKernel kernel){
+        this.kernel = kernel;
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton OpenProgramsButton;
     private javax.swing.JList gCodeList;
     private javax.swing.JScrollPane gCodeListScroll;
     private javax.swing.JDesktopPane jDesktopPane1;
