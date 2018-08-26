@@ -326,7 +326,6 @@ public class CNCFrame extends javax.swing.JFrame {
     }
     
     public void setProgramsToList(ArrayList<String> programs){
-        System.out.println("setting prog");
         DefaultListModel<String> model = new DefaultListModel();
         programsList.setModel(model);
         for (String s: programs){

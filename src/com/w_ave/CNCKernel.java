@@ -9,12 +9,18 @@ import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONStreamAware;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -22,8 +28,10 @@ import java.util.logging.Logger;
  */
 public class CNCKernel {
 // deprecated
+
     private static String INPUT_FILE = "prog.mpf";
-    private static String ROOT_PATH = "d:/CNC_root/Programs/";
+    private static String PROGRAM_ROOT = "d:/CNC_root/Programs/";
+    private static String SETTINGS_ROOT = "d:/CNC_root/";
 
     CNCFrame cncFrame;
 
@@ -36,8 +44,8 @@ public class CNCKernel {
     double currentX, prevX, ostX;
 
     public CNCKernel() {
-        programsList = fillListOfFiles(new File(ROOT_PATH));
-        this.prog = prepareProgram(INPUT_FILE);
+        programsList = fillListOfFiles(new File(PROGRAM_ROOT));
+        this.prog = prepareProgram(getSelectedFileFromSettings());
         CNCKernel kernel = this;
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
@@ -105,7 +113,7 @@ public class CNCKernel {
     }
 
     private ArrayList<String> prepareProgram(String nameOfSelectedFile) {
-        File inputFile = new File(ROOT_PATH + nameOfSelectedFile);
+        File inputFile = new File(PROGRAM_ROOT + nameOfSelectedFile);
         ArrayList<String> array = new ArrayList<>();
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -182,6 +190,7 @@ public class CNCKernel {
         System.out.println(programName);
         this.prog = prepareProgram(programName);
         cncFrame.setProgramToList(prog);
+        setSelectedFileToSettings(programName);
     }
 
     private class ComPortReceiver extends Thread {
@@ -262,4 +271,36 @@ public class CNCKernel {
         return filesList;
     }
 
+    private void setSelectedFileToSettings(String fileName) {
+        JSONObject resultJSONObject = new JSONObject();
+        resultJSONObject.put("selectedProgram", fileName);
+
+        JSONStreamAware jSONStreamAware = resultJSONObject;
+
+        try {
+            Writer sout = new FileWriter(SETTINGS_ROOT + "selectedProgram.txt");
+
+            jSONStreamAware.writeJSONString(sout);
+            sout.flush();
+            sout.close();
+
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+
+    }
+
+    private String getSelectedFileFromSettings() {
+        String fileName = new String();
+        try {
+            JSONParser parser = new JSONParser();
+            JSONObject setting = (JSONObject) parser.parse(new FileReader(SETTINGS_ROOT + "selectedProgram.txt"));
+            fileName = (String) setting.get("selectedProgram");
+        } catch (IOException ex) {
+            Logger.getLogger(CNCKernel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(CNCKernel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return fileName;
+    }
 }
