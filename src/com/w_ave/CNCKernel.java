@@ -41,8 +41,8 @@ public class CNCKernel {
     Character[] symbols = {'N', 'G', 'M', 'X', 'Y', 'Z'};
 //    String[] program = {"x-1.", "x3.", "x-10."};
     ArrayList<String> prog;
-    double currentX, prevX, ostX;
-    double currentZ, prevZ, ostZ;
+    double currentX, ostX;
+    double currentZ, ostZ;
 
     public CNCKernel() {
         programsList = fillListOfFiles(new File(PROGRAM_ROOT));
@@ -141,6 +141,7 @@ public class CNCKernel {
     // looking for one axis value from the frame
     private double parseAxis(char ch, String frame) {
         double axisValue;
+
         int point = frame.indexOf(ch);
         for (int i = point + 1; i < frame.length(); i++) {
             if (Character.isLetter(frame.charAt(i))) {
@@ -156,6 +157,7 @@ public class CNCKernel {
     private String parseFrame(String frame) {
         StringBuilder result = new StringBuilder();
         double deltaX;
+        double prevX;
 
         if (frame.indexOf('x') != -1) {
             prevX = currentX;
@@ -166,6 +168,7 @@ public class CNCKernel {
         }
 
         double deltaZ;
+        double prevZ;
         if (frame.indexOf('z') != -1) {
             prevZ = currentZ;
             currentZ = parseAxis('z', frame);
