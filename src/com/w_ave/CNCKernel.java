@@ -42,6 +42,7 @@ public class CNCKernel {
 //    String[] program = {"x-1.", "x3.", "x-10."};
     ArrayList<String> prog;
     double currentX, prevX, ostX;
+    double currentZ, prevZ, ostZ;
 
     public CNCKernel() {
         programsList = fillListOfFiles(new File(PROGRAM_ROOT));
@@ -139,30 +140,43 @@ public class CNCKernel {
 
     // looking for one axis value from the frame
     private double parseAxis(char ch, String frame) {
-        double axisValue = 0;
+        double axisValue;
         int point = frame.indexOf(ch);
-        if (point != -1) {
-            for (int i = point + 1; i < frame.length(); i++) {
-                if (Character.isLetter(frame.charAt(i))) {
-                    axisValue = Double.parseDouble(frame.substring(point + 1, i - 1));
-                    return axisValue;
-                }
+        for (int i = point + 1; i < frame.length(); i++) {
+            if (Character.isLetter(frame.charAt(i))) {
+                axisValue = Double.parseDouble(frame.substring(point + 1, i - 1));
+                return axisValue;
             }
-            axisValue = Double.parseDouble(frame.substring(point + 1, frame.length() - 1));
         }
+        axisValue = Double.parseDouble(frame.substring(point + 1, frame.length() - 1));
         return axisValue;
     }
 
     // looking for all the delta axis from the frame
     private String parseFrame(String frame) {
+        StringBuilder result = new StringBuilder();
         double deltaX;
-        prevX = currentX;
-        currentX = parseAxis('x', frame);
-        deltaX = currentX - prevX;
-        return prepareAxisTask('x', deltaX);
+
+        if (frame.indexOf('x') != -1) {
+            prevX = currentX;
+            currentX = parseAxis('x', frame);
+            deltaX = currentX - prevX;
+            result.append(prepareAxisTask('x', deltaX, 96));
+            result.append(" ");
+        }
+
+        double deltaZ;
+        if (frame.indexOf('z') != -1) {
+            prevZ = currentZ;
+            currentZ = parseAxis('z', frame);
+            deltaZ = currentZ - prevZ;
+            result.append(prepareAxisTask('z', deltaZ, 10));
+        }
+        result.append("@");
+        return result.toString();
     }
 
-    private String prepareAxisTask(char ch, double value) {
+    private StringBuilder prepareAxisTask(char ch, double value, int mult) {
         StringBuilder s = new StringBuilder();
         s.append(ch);
 
@@ -173,12 +187,20 @@ public class CNCKernel {
         }
 
         value = Math.abs(value);
-        int val = (int) value * 96;
+        int val = (int) value * mult;
 //        ostX = d - val;
-        s.append(val);
-        s.append("@");
 
-        return s.toString();
+        StringBuilder intBuffer = new StringBuilder();
+        intBuffer.append(val);
+        intBuffer.reverse();
+        while (intBuffer.length() < 5) {
+            intBuffer.append('0');
+        }
+        intBuffer.reverse();
+        s.append(intBuffer);
+//        s.append("@");
+
+        return s;
     }
 
     private String prepareAuxiliaryFuncTask(char ch, int value) {
