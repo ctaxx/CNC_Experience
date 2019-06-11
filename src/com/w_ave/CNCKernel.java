@@ -139,7 +139,7 @@ public class CNCKernel {
     }
 
     // looking for one axis value from the frame
-    private double parseAxis(char ch, String frame) {
+    private double parseAxisValue(char ch, String frame) {
         double axisValue;
 
         int point = frame.indexOf(ch);
@@ -152,7 +152,7 @@ public class CNCKernel {
         axisValue = Double.parseDouble(frame.substring(point + 1, frame.length() - 1));
         return axisValue;
     }
-
+    
     // looking for all the delta axis from the frame
     private String parseFrame(String frame) {
         StringBuilder result = new StringBuilder();
@@ -161,7 +161,7 @@ public class CNCKernel {
 
         if (frame.indexOf('x') != -1) {
             prevX = currentX;
-            currentX = parseAxis('x', frame);
+            currentX = parseAxisValue('x', frame);
             deltaX = currentX - prevX;
             result.append(prepareAxisTask('x', deltaX, 96));
             result.append(" ");
@@ -171,9 +171,9 @@ public class CNCKernel {
         double prevZ;
         if (frame.indexOf('z') != -1) {
             prevZ = currentZ;
-            currentZ = parseAxis('z', frame);
+            currentZ = parseAxisValue('z', frame);
             deltaZ = currentZ - prevZ;
-            result.append(prepareAxisTask('z', deltaZ, 10));
+            result.append(prepareAxisTask('z', deltaZ, 100*5/3));
         }
         result.append("@");
         return result.toString();
@@ -184,9 +184,9 @@ public class CNCKernel {
         s.append(ch);
 
         if (value >= 0) {
-            s.append("<");
+            s.append("+");
         } else {
-            s.append(">");
+            s.append("-");
         }
 
         value = Math.abs(value);
