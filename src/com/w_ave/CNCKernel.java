@@ -152,7 +152,7 @@ public class CNCKernel {
         axisValue = Double.parseDouble(frame.substring(point + 1, frame.length() - 1));
         return axisValue;
     }
-    
+
     // looking for all the delta axis from the frame
     private String parseFrame(String frame) {
         StringBuilder result = new StringBuilder();
@@ -163,7 +163,7 @@ public class CNCKernel {
             prevX = currentX;
             currentX = parseAxisValue('x', frame);
             deltaX = currentX - prevX;
-            result.append(prepareAxisTask('x', deltaX, 96));
+            result.append(prepareAxisTask('x', deltaX));
             result.append(" ");
         }
 
@@ -173,13 +173,14 @@ public class CNCKernel {
             prevZ = currentZ;
             currentZ = parseAxisValue('z', frame);
             deltaZ = currentZ - prevZ;
-            result.append(prepareAxisTask('z', deltaZ, 100*5/3));
+//            result.append(prepareAxisTask('z', deltaZ, 100*5/3));
+            result.append(prepareAxisTask('z', deltaZ));
         }
         result.append("@");
         return result.toString();
     }
 
-    private StringBuilder prepareAxisTask(char ch, double value, int mult) {
+    private StringBuilder prepareAxisTask(char ch, double value) {
         StringBuilder s = new StringBuilder();
         s.append(ch);
 
@@ -190,7 +191,7 @@ public class CNCKernel {
         }
 
         value = Math.abs(value);
-        int val = (int) value * mult;
+        int val = (int) value;
 //        ostX = d - val;
 
         StringBuilder intBuffer = new StringBuilder();
