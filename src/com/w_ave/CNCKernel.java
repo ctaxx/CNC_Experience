@@ -39,7 +39,6 @@ public class CNCKernel {
 
     int listPointer = 0;
     Character[] symbols = {'N', 'G', 'M', 'X', 'Y', 'Z'};
-//    String[] program = {"x-1.", "x3.", "x-10."};
     ArrayList<String> prog;
     double currentX, ostX;
     double currentZ, ostZ;
@@ -139,7 +138,7 @@ public class CNCKernel {
     }
 
     // looking for one axis value from the frame
-    private double parseAxisValue(char ch, String frame) {
+    private double parseAddressValue(char ch, String frame) {
         double axisValue;
 
         int point = frame.indexOf(ch);
@@ -161,9 +160,10 @@ public class CNCKernel {
 
         if (frame.indexOf('x') != -1) {
             prevX = currentX;
-            currentX = parseAxisValue('x', frame);
+            currentX = parseAddressValue('x', frame);
             deltaX = currentX - prevX;
-            result.append(prepareAxisTask('x', deltaX));
+            result.append('x');
+            result.append(deltaX);
             result.append(" ");
         }
 
@@ -171,40 +171,14 @@ public class CNCKernel {
         double prevZ;
         if (frame.indexOf('z') != -1) {
             prevZ = currentZ;
-            currentZ = parseAxisValue('z', frame);
+            currentZ = parseAddressValue('z', frame);
             deltaZ = currentZ - prevZ;
 //            result.append(prepareAxisTask('z', deltaZ, 100*5/3));
-            result.append(prepareAxisTask('z', deltaZ));
+            result.append('z');
+            result.append(deltaZ);
         }
         result.append("@");
         return result.toString();
-    }
-
-    private StringBuilder prepareAxisTask(char ch, double value) {
-        StringBuilder s = new StringBuilder();
-        s.append(ch);
-
-        if (value >= 0) {
-            s.append("+");
-        } else {
-            s.append("-");
-        }
-
-        value = Math.abs(value);
-        int val = (int) value;
-//        ostX = d - val;
-
-        StringBuilder intBuffer = new StringBuilder();
-        intBuffer.append(val);
-        intBuffer.reverse();
-        while (intBuffer.length() < 5) {
-            intBuffer.append('0');
-        }
-        intBuffer.reverse();
-        s.append(intBuffer);
-//        s.append("@");
-
-        return s;
     }
 
     private String prepareAuxiliaryFuncTask(char ch, int value) {
