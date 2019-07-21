@@ -33,6 +33,8 @@ public class CNCKernel {
     private static String PROGRAM_ROOT = "d:/CNC_root/Programs/";
     private static String SETTINGS_ROOT = "d:/CNC_root/";
 
+    private static final String M_ADDRESS = "M";
+
     CNCFrame cncFrame;
 
     ArrayList programsList;
@@ -41,7 +43,7 @@ public class CNCKernel {
     Character[] symbols = {'N', 'G', 'M', 'X', 'Y', 'Z'};
     ArrayList<String> prog;
     double currentX, ostX;
-    double currentZ, ostZ;
+    double currentY, ostY;
 
     public CNCKernel() {
         programsList = fillListOfFiles(new File(PROGRAM_ROOT));
@@ -155,27 +157,34 @@ public class CNCKernel {
     // looking for all the delta axis from the frame
     private String parseFrame(String frame) {
         StringBuilder result = new StringBuilder();
-        double deltaX;
-        double prevX;
 
-        if (frame.indexOf('x') != -1) {
-            prevX = currentX;
-            currentX = parseAddressValue('x', frame);
-            deltaX = currentX - prevX;
-            result.append('x');
-            result.append(deltaX);
-            result.append(" ");
-        }
+        if (frame.contains(M_ADDRESS)) {
+            result.append("m");
+            int mIndex = frame.indexOf(M_ADDRESS);
+            result.append(frame.substring(mIndex + 1, mIndex + 2));
+        } else {
+            double deltaX;
+            double prevX;
 
-        double deltaZ;
-        double prevZ;
-        if (frame.indexOf('z') != -1) {
-            prevZ = currentZ;
-            currentZ = parseAddressValue('z', frame);
-            deltaZ = currentZ - prevZ;
+            if (frame.indexOf('x') != -1) {
+                prevX = currentX;
+                currentX = parseAddressValue('x', frame);
+                deltaX = currentX - prevX;
+                result.append('x');
+                result.append(deltaX);
+                result.append(" ");
+            }
+
+            double deltaY;
+            double prevY;
+            if (frame.indexOf('y') != -1) {
+                prevY = currentY;
+                currentY = parseAddressValue('y', frame);
+                deltaY = currentY - prevY;
 //            result.append(prepareAxisTask('z', deltaZ, 100*5/3));
-            result.append('z');
-            result.append(deltaZ);
+                result.append('y');
+                result.append(deltaY);
+            }
         }
         result.append("@");
         return result.toString();
