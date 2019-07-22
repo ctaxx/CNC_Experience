@@ -34,6 +34,8 @@ public class CNCKernel {
     private static String SETTINGS_ROOT = "d:/CNC_root/";
 
     private static final String M_ADDRESS = "M";
+    private static final String X_ADDRESS = "X";
+    private static final String F_ADDRESS = "F";
 
     CNCFrame cncFrame;
 
@@ -161,30 +163,34 @@ public class CNCKernel {
         if (frame.contains(M_ADDRESS)) {
             result.append("m");
             int mIndex = frame.indexOf(M_ADDRESS);
-            result.append(frame.substring(mIndex + 1, mIndex + 2));
+            result.append(frame.substring(mIndex + 1, mIndex + 3));
         } else {
             double deltaX;
             double prevX;
-
-            if (frame.indexOf('x') != -1) {
+            result.append('x');
+            if (frame.indexOf('X') != -1) {
                 prevX = currentX;
-                currentX = parseAddressValue('x', frame);
+                currentX = parseAddressValue('X', frame);
                 deltaX = currentX - prevX;
-                result.append('x');
                 result.append(deltaX);
-                result.append(" ");
+            }else{
+                result.append("0.0");
             }
 
             double deltaY;
             double prevY;
-            if (frame.indexOf('y') != -1) {
+            result.append(" y");
+            if (frame.indexOf('Y') != -1) {
                 prevY = currentY;
-                currentY = parseAddressValue('y', frame);
+                currentY = parseAddressValue('Y', frame);
                 deltaY = currentY - prevY;
 //            result.append(prepareAxisTask('z', deltaZ, 100*5/3));
-                result.append('y');
                 result.append(deltaY);
+            }else{
+                result.append("0.0");
             }
+            result.append(" f");
+            result.append(frame.substring(frame.indexOf(F_ADDRESS)+1, frame.length()-1));
         }
         result.append("@");
         return result.toString();
