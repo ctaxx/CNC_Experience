@@ -36,6 +36,7 @@ public class CNCKernel {
     private static final String M_ADDRESS = "M";
     private static final String X_ADDRESS = "X";
     private static final String F_ADDRESS = "F";
+    private static final int TOLERANCE = 10;
 
     CNCFrame cncFrame;
 
@@ -172,8 +173,9 @@ public class CNCKernel {
                 prevX = currentX;
                 currentX = parseAddressValue('X', frame);
                 deltaX = currentX - prevX;
+                deltaX = Math.round(deltaX * TOLERANCE) / TOLERANCE;
                 result.append(deltaX);
-            }else{
+            } else {
                 result.append("0.0");
             }
 
@@ -184,13 +186,14 @@ public class CNCKernel {
                 prevY = currentY;
                 currentY = parseAddressValue('Y', frame);
                 deltaY = currentY - prevY;
+                deltaY = Math.round(deltaY * TOLERANCE) / TOLERANCE;
 //            result.append(prepareAxisTask('z', deltaZ, 100*5/3));
                 result.append(deltaY);
-            }else{
+            } else {
                 result.append("0.0");
             }
             result.append(" f");
-            result.append(frame.substring(frame.indexOf(F_ADDRESS)+1, frame.length()-1));
+            result.append(frame.substring(frame.indexOf(F_ADDRESS) + 1, frame.length() - 1));
         }
         result.append("@");
         return result.toString();
