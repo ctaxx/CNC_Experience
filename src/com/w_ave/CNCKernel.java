@@ -36,14 +36,14 @@ public class CNCKernel {
     private static final String M_ADDRESS = "M";
     private static final String X_ADDRESS = "X";
     private static final String F_ADDRESS = "F";
-    private static final int TOLERANCE = 10;
+    private static final double TOLERANCE = 100.0;
 
     CNCFrame cncFrame;
 
     ArrayList programsList;
 
     int listPointer = 0;
-    Character[] symbols = {'N', 'G', 'M', 'X', 'Y', 'Z'};
+//    Character[] symbols = {'N', 'G', 'M', 'X', 'Y', 'Z'};
     ArrayList<String> prog;
     double currentX, ostX;
     double currentY, ostY;
@@ -242,7 +242,7 @@ public class CNCKernel {
                 System.out.println("RECEIVED MESSAGEs: " + stringBuffer);
 
                 // this logic should be placed in some kind of   
-                // message interpreter class not here  
+                // message interpreter class not here              
                 if (stringBuffer.charAt(0) == '?') {
                     if (listPointer < prog.size()) {
                         ComPortSender.send(getMessage(parseFrame(prog.get(listPointer))));

@@ -114,6 +114,7 @@ public class CNCFrame extends javax.swing.JFrame {
 
         mainInnerFrame.setVisible(true);
 
+        gCodeList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         gCodeListScroll.setViewportView(gCodeList);
 
         javax.swing.GroupLayout mainInnerFrameLayout = new javax.swing.GroupLayout(mainInnerFrame.getContentPane());
