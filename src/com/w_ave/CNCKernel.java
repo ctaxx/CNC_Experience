@@ -21,6 +21,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import com.google.gson.*;
 
 /**
  *
@@ -47,6 +48,20 @@ public class CNCKernel {
     ArrayList<String> prog;
     double currentX, ostX;
     double currentY, ostY;
+
+    boolean isJog = true;       // jog = true,  auto = false;
+
+    public void setIsJog(boolean isJog) {
+        this.isJog = isJog;
+    }
+    boolean isBusy = false;     // start = true,    stop = false;
+    short step = 0;             // 10, 100, 1000
+    boolean isStepped = false;
+
+    public void setIsStepped() {
+        this.isStepped = !this.isStepped;
+    }
+    char axis = '0';
 
     public CNCKernel() {
         programsList = fillListOfFiles(new File(PROGRAM_ROOT));
@@ -88,12 +103,32 @@ public class CNCKernel {
     public static void main(String[] args) {
 
         CNCKernel kernel = new CNCKernel();
+        RemoteControlTCPServer remoteControlSrv = new RemoteControlTCPServer(kernel);
+        remoteControlSrv.start();
 
         try {
             kernel.connect("COM3");
         } catch (Exception ex) {
             Logger.getLogger(CNCKernel.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public JsonObject getKernelState() {
+        JsonObject json = new JsonObject();
+        json.addProperty("START", "false");
+        json.addProperty("STOP", "false");
+        json.addProperty("RESET", "false");
+        json.addProperty("JOG", Boolean.toString(isJog));
+        json.addProperty("AUTO", Boolean.toString(!isJog));
+        json.addProperty("10", "false");
+        json.addProperty("100", "false");
+        json.addProperty("1000", "false");
+        json.addProperty("STEP", Boolean.toString(isStepped));
+        json.addProperty("X", "false");
+        json.addProperty("Y", "false");
+        json.addProperty("+", "false");
+        json.addProperty("-", "false");
+        return json;
     }
 
     private void connect(String portName) throws Exception {
