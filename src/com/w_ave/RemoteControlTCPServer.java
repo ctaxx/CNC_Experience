@@ -63,6 +63,14 @@ public class RemoteControlTCPServer extends Thread{
                     kernel.setIsStepped();
                 }
                 
+                if (messageContent.equals("START")){
+                    kernel.setProgExecuting(true);
+                }
+                
+                if (messageContent.equals("STOP")){
+                    kernel.setProgExecuting(false);
+                }
+                
                 output.print(kernel.getKernelState().toString());
                 System.out.println("->send message");
                 

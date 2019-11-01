@@ -54,7 +54,18 @@ public class CNCKernel {
     public void setIsJog(boolean isJog) {
         this.isJog = isJog;
     }
-    boolean isBusy = false;     // start = true,    stop = false;
+    boolean requiredNextFrame = false;
+
+    public synchronized void setRequiredNextFrame(boolean requiredNextFrame) {
+        this.requiredNextFrame = requiredNextFrame;
+    }
+    boolean progExecuting = false;
+
+    public void setProgExecuting(boolean progExecuting) {
+        if (!isJog) {
+            this.progExecuting = progExecuting;
+        }
+    }
     short step = 0;             // 10, 100, 1000
     boolean isStepped = false;
 
@@ -115,8 +126,8 @@ public class CNCKernel {
 
     public JsonObject getKernelState() {
         JsonObject json = new JsonObject();
-        json.addProperty("START", "false");
-        json.addProperty("STOP", "false");
+        json.addProperty("START", Boolean.toString(progExecuting));
+        json.addProperty("STOP", Boolean.toString(!progExecuting));
         json.addProperty("RESET", "false");
         json.addProperty("JOG", Boolean.toString(isJog));
         json.addProperty("AUTO", Boolean.toString(!isJog));
@@ -149,6 +160,31 @@ public class CNCKernel {
 
             // setup serial port reader  
             new ComPortReceiver(serialPort.getInputStream()).start();
+            // sepup serial port writer
+            new Thread(new Runnable() {
+
+                // helper methods   
+                public byte[] getMessage(String message) {
+                    return (message).getBytes();
+                }
+
+                @Override
+                public void run() {
+                    while (true) {
+                        if (requiredNextFrame) {
+                            if (isJog) {
+                            } else {
+                                if (listPointer < prog.size() & progExecuting) {
+                                    setRequiredNextFrame(false);
+                                    setProgExecuting(!isStepped);
+                                    ComPortSender.send(getMessage(parseFrame(prog.get(listPointer))));
+                                    listPointer++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }).start();
         }
     }
 
@@ -279,10 +315,11 @@ public class CNCKernel {
                 // this logic should be placed in some kind of   
                 // message interpreter class not here              
                 if (stringBuffer.charAt(0) == '?') {
-                    if (listPointer < prog.size()) {
-                        ComPortSender.send(getMessage(parseFrame(prog.get(listPointer))));
-                        listPointer++;
-                    }
+                    setRequiredNextFrame(true);
+//                    if (listPointer < prog.size()) {
+//                        ComPortSender.send(getMessage(parseFrame(prog.get(listPointer))));
+//                        listPointer++;
+//                    }
 //                    ComPortSender.send(getMessage("x<100@"));
                 }
                 stringBuffer = new StringBuffer();
