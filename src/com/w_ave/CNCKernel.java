@@ -22,6 +22,11 @@ import org.json.simple.JSONStreamAware;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import com.google.gson.*;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 /**
  *
@@ -74,6 +79,13 @@ public class CNCKernel {
     }
     char axis = '0';
 
+    boolean haveToRefreshButtons = false;
+
+    public synchronized void setHaveToRefreshButtons(boolean haveToRefreshButtons) {
+        this.haveToRefreshButtons = haveToRefreshButtons;
+        System.out.println("have to have been set to " + haveToRefreshButtons);
+    }
+
     public CNCKernel() {
         programsList = fillListOfFiles(new File(PROGRAM_ROOT));
         this.prog = prepareProgram(getSelectedFileFromSettings());
@@ -114,14 +126,14 @@ public class CNCKernel {
     public static void main(String[] args) {
 
         CNCKernel kernel = new CNCKernel();
-        RemoteControlTCPServer remoteControlSrv = new RemoteControlTCPServer(kernel);
-        remoteControlSrv.start();
-
         try {
             kernel.connect("COM3");
+            
         } catch (Exception ex) {
             Logger.getLogger(CNCKernel.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        kernel.RemoteControlTCPServerConnect();
     }
 
     public JsonObject getKernelState() {
@@ -185,6 +197,29 @@ public class CNCKernel {
                     }
                 }
             }).start();
+        }
+    }
+
+    public void RemoteControlTCPServerConnect() {
+        ServerSocket srvSocket;
+        Socket clientSocket;
+
+        try {
+            srvSocket = new ServerSocket(65500);
+            System.out.println("server running");
+
+            while (true) {
+                clientSocket = srvSocket.accept();
+                System.out.println("accepted");
+                
+                setHaveToRefreshButtons(true);
+
+                new Thread(new RemoteControlTCPRdr(this, clientSocket)).start();
+
+                new Thread(new RemoteControlTCPSndr(this, clientSocket)).start();
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 
