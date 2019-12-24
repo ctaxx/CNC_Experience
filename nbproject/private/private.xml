@@ -3,9 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Work/CNC_Experience/src/com/w_ave/RemoteControlTCPServer.java</file>
             <file>file:/D:/Work/CNC_Experience/src/com/w_ave/RemoteControlTCPSndr.java</file>
-            <file>file:/D:/Work/CNC_Experience/src/com/w_ave/example/RemoteControlTCPRdr.java</file>
+            <file>file:/D:/Work/CNC_Experience/src/com/w_ave/CNCKernel.java</file>
+            <file>file:/D:/Work/CNC_Experience/src/com/w_ave/RemoteControlTCPRdr.java</file>
         </group>
     </open-files>
 </project-private>

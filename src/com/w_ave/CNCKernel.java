@@ -83,7 +83,7 @@ public class CNCKernel {
 
     public synchronized void setHaveToRefreshButtons(boolean haveToRefreshButtons) {
         this.haveToRefreshButtons = haveToRefreshButtons;
-        System.out.println("have to have been set to " + haveToRefreshButtons);
+        System.out.println("haveTo have been set to " + haveToRefreshButtons);
     }
 
     public CNCKernel() {
