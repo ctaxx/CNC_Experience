@@ -14,10 +14,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.Reader;
 import java.io.Writer;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -271,10 +267,6 @@ public class CNCKernel {
         }
         result.append("@");
         return result.toString();
-    }
-
-    private String prepareAuxiliaryFuncTask(char ch, int value) {
-        return null;
     }
 
     public void onProgramChoosed(String programName) {
