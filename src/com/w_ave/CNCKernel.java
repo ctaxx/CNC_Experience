@@ -5,6 +5,8 @@
  */
 package com.w_ave;
 
+import com.google.gson.*;
+import com.w_ave.utils.Utils;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import java.io.File;
@@ -12,8 +14,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,12 +28,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONStreamAware;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import com.google.gson.*;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.net.ServerSocket;
-import java.net.Socket;
 
 /**
  *
@@ -40,7 +41,6 @@ public class CNCKernel {
     private static String SETTINGS_ROOT = "d:/CNC_root/";
 
     private static final String M_ADDRESS = "M";
-    private static final String X_ADDRESS = "X";
     private static final String F_ADDRESS = "F";
     private static final double TOLERANCE = 100.0;
 
@@ -59,6 +59,7 @@ public class CNCKernel {
     public void setIsJog(boolean isJog) {
         this.isJog = isJog;
     }
+ 
     boolean requiredNextFrame = false;
 
     public synchronized void setRequiredNextFrame(boolean requiredNextFrame) {
@@ -71,6 +72,9 @@ public class CNCKernel {
             this.progExecuting = progExecuting;
         }
     }
+        
+    public boolean haveToStop = false;
+   
     short step = 0;             // 10, 100, 1000
     boolean isStepped = false;
 
@@ -88,7 +92,7 @@ public class CNCKernel {
 
     public CNCKernel() {
         programsList = fillListOfFiles(new File(PROGRAM_ROOT));
-        this.prog = prepareProgram(getSelectedFileFromSettings());
+        this.prog = Utils.prepareProgram(PROGRAM_ROOT + getSelectedFileFromSettings());
         CNCKernel kernel = this;
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
@@ -183,6 +187,10 @@ public class CNCKernel {
                 @Override
                 public void run() {
                     while (true) {
+                        if (haveToStop){
+                            ComPortSender.send("#".getBytes());
+                            haveToStop = false;
+                        }
                         if (requiredNextFrame) {
                             if (isJog) {
                             } else {
@@ -222,47 +230,7 @@ public class CNCKernel {
             ex.printStackTrace();
         }
     }
-
-    private ArrayList<String> prepareProgram(String nameOfSelectedFile) {
-        File inputFile = new File(PROGRAM_ROOT + nameOfSelectedFile);
-        ArrayList<String> array = new ArrayList<>();
-        StringBuilder stringBuilder = new StringBuilder();
-
-        try {
-            Reader rin = new FileReader(inputFile.getAbsoluteFile());
-            int c;
-            while ((c = rin.read()) != -1) {
-                if (c == '\n') {
-                    array.add(stringBuilder.toString());
-                    stringBuilder = new StringBuilder();
-                } else {
-                    stringBuilder.append((char) c);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-//        for (String s : array) {
-//            System.out.println(s);
-//        }
-        return array;
-    }
-
-    // looking for one axis value from the frame
-    private double parseAddressValue(char ch, String frame) {
-        double axisValue;
-
-        int point = frame.indexOf(ch);
-        for (int i = point + 1; i < frame.length(); i++) {
-            if (Character.isLetter(frame.charAt(i))) {
-                axisValue = Double.parseDouble(frame.substring(point + 1, i - 1));
-                return axisValue;
-            }
-        }
-        axisValue = Double.parseDouble(frame.substring(point + 1, frame.length() - 1));
-        return axisValue;
-    }
-
+    
     // looking for all the delta axis from the frame
     private String parseFrame(String frame) {
         StringBuilder result = new StringBuilder();
@@ -277,7 +245,7 @@ public class CNCKernel {
             result.append('x');
             if (frame.indexOf('X') != -1) {
                 prevX = currentX;
-                currentX = parseAddressValue('X', frame);
+                currentX = Utils.parseAddressValue('X', frame);
                 deltaX = currentX - prevX;
                 deltaX = Math.round(deltaX * TOLERANCE) / TOLERANCE;
                 result.append(deltaX);
@@ -290,7 +258,7 @@ public class CNCKernel {
             result.append(" y");
             if (frame.indexOf('Y') != -1) {
                 prevY = currentY;
-                currentY = parseAddressValue('Y', frame);
+                currentY = Utils.parseAddressValue('Y', frame);
                 deltaY = currentY - prevY;
                 deltaY = Math.round(deltaY * TOLERANCE) / TOLERANCE;
 //            result.append(prepareAxisTask('z', deltaZ, 100*5/3));
@@ -312,7 +280,7 @@ public class CNCKernel {
     public void onProgramChoosed(String programName) {
         System.out.println("program was changed");
         System.out.println(programName);
-        this.prog = prepareProgram(programName);
+        this.prog = Utils.prepareProgram(PROGRAM_ROOT + programName);
         cncFrame.setProgramToList(prog);
         setSelectedFileToSettings(programName);
     }
@@ -412,7 +380,6 @@ public class CNCKernel {
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
         }
-
     }
 
     private String getSelectedFileFromSettings() {

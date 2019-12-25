@@ -69,6 +69,7 @@ public class RemoteControlTCPRdr implements Runnable {
                     }
 
                     if (messageContent.equals("STOP")) {
+                        kernel.haveToStop = true;
                         kernel.setProgExecuting(false);
                     }
                     kernel.setHaveToRefreshButtons(true);
