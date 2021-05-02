@@ -7,6 +7,7 @@ package com.w_ave;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import static java.lang.Thread.sleep;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,6 +43,11 @@ public class RemoteControlTCPSndr implements Runnable {
                 output.println(kernel.getKernelState().toString());
                 System.out.println("->send message");
                 output.flush();
+            }
+            try {
+                sleep(200);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(RemoteControlTCPSndr.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

@@ -45,8 +45,8 @@ public class RemoteControlTCPRdr implements Runnable {
         String msg;
         while (true) {
             try {
-                if ((msg = reader.readLine()) != null) {
-                    
+//                if ((msg = reader.readLine()) != null) {
+                    msg = reader.readLine();
                     System.out.println(msg);
 
                     JsonObject msgJson = new JsonParser().parse(msg).getAsJsonObject();
@@ -73,7 +73,7 @@ public class RemoteControlTCPRdr implements Runnable {
                         kernel.setProgExecuting(false);
                     }
                     kernel.setHaveToRefreshButtons(true);
-                }
+//                }
             } catch (IOException ex) {
                 Logger.getLogger(RemoteControlTCPRdr.class.getName()).log(Level.SEVERE, null, ex);
             }
