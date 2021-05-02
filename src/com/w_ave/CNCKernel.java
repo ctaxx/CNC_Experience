@@ -6,24 +6,18 @@
 package com.w_ave;
 
 import com.google.gson.*;
+import com.w_ave.utils.FileUtils;
 import com.w_ave.utils.Utils;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Writer;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONStreamAware;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -32,9 +26,9 @@ import org.json.simple.parser.ParseException;
 public class CNCKernel {
 // deprecated
 
-    private static String INPUT_FILE = "prog.mpf";
+//    private static String INPUT_FILE = "prog.mpf";
     private static String PROGRAM_ROOT = "d:/CNC_root/Programs/";
-    private static String SETTINGS_ROOT = "d:/CNC_root/";
+//    private static String SETTINGS_ROOT = "d:/CNC_root/";
 
     private static final String M_ADDRESS = "M";
     private static final String F_ADDRESS = "F";
@@ -55,7 +49,7 @@ public class CNCKernel {
     public void setIsJog(boolean isJog) {
         this.isJog = isJog;
     }
- 
+
     boolean requiredNextFrame = false;
 
     public synchronized void setRequiredNextFrame(boolean requiredNextFrame) {
@@ -68,9 +62,9 @@ public class CNCKernel {
             this.progExecuting = progExecuting;
         }
     }
-        
+
     public boolean haveToStop = false;
-   
+
     short step = 0;             // 10, 100, 1000
     boolean isStepped = false;
 
@@ -87,8 +81,8 @@ public class CNCKernel {
     }
 
     public CNCKernel() {
-        programsList = fillListOfFiles(new File(PROGRAM_ROOT));
-        this.prog = Utils.prepareProgram(PROGRAM_ROOT + getSelectedFileFromSettings());
+        programsList = FileUtils.fillListOfFiles(new File(PROGRAM_ROOT));
+        this.prog = Utils.prepareProgram(PROGRAM_ROOT + FileUtils.getSelectedFileNameFromSettings());
         CNCKernel kernel = this;
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
@@ -124,15 +118,14 @@ public class CNCKernel {
     }
 
     public static void main(String[] args) {
-
         CNCKernel kernel = new CNCKernel();
         try {
             kernel.connect("COM3");
-            
+
         } catch (Exception ex) {
             Logger.getLogger(CNCKernel.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         kernel.RemoteControlTCPServerConnect();
     }
 
@@ -183,7 +176,7 @@ public class CNCKernel {
                 @Override
                 public void run() {
                     while (true) {
-                        if (haveToStop){
+                        if (haveToStop) {
                             ComPortSender.send("#".getBytes());
                             haveToStop = false;
                         }
@@ -215,7 +208,7 @@ public class CNCKernel {
             while (true) {
                 clientSocket = srvSocket.accept();
                 System.out.println("accepted");
-                
+
                 setHaveToRefreshButtons(true);
 
                 new Thread(new RemoteControlTCPRdr(this, clientSocket)).start();
@@ -226,7 +219,7 @@ public class CNCKernel {
             ex.printStackTrace();
         }
     }
-    
+
     // looking for all the delta axis from the frame
     private String parseFrame(String frame) {
         StringBuilder result = new StringBuilder();
@@ -274,7 +267,7 @@ public class CNCKernel {
         System.out.println(programName);
         this.prog = Utils.prepareProgram(PROGRAM_ROOT + programName);
         cncFrame.setProgramToList(prog);
-        setSelectedFileToSettings(programName);
+        FileUtils.setSelectedFileNameToSettings(programName);
     }
 
     private class ComPortReceiver extends Thread {
@@ -345,46 +338,5 @@ public class CNCKernel {
                 e.printStackTrace();
             }
         }
-    }
-
-    public ArrayList<String> fillListOfFiles(File f) {
-        ArrayList<String> filesList = new ArrayList();
-        File[] files = f.listFiles();
-        for (File file : files) {
-            filesList.add(file.getName());
-        }
-        return filesList;
-    }
-
-    private void setSelectedFileToSettings(String fileName) {
-        JSONObject resultJSONObject = new JSONObject();
-        resultJSONObject.put("selectedProgram", fileName);
-
-        JSONStreamAware jSONStreamAware = resultJSONObject;
-
-        try {
-            Writer sout = new FileWriter(SETTINGS_ROOT + "selectedProgram.txt");
-
-            jSONStreamAware.writeJSONString(sout);
-            sout.flush();
-            sout.close();
-
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        }
-    }
-
-    private String getSelectedFileFromSettings() {
-        String fileName = new String();
-        try {
-            JSONParser parser = new JSONParser();
-            JSONObject setting = (JSONObject) parser.parse(new FileReader(SETTINGS_ROOT + "selectedProgram.txt"));
-            fileName = (String) setting.get("selectedProgram");
-        } catch (IOException ex) {
-            Logger.getLogger(CNCKernel.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
-            Logger.getLogger(CNCKernel.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return fileName;
     }
 }

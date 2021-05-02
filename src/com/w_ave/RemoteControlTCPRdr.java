@@ -46,33 +46,33 @@ public class RemoteControlTCPRdr implements Runnable {
         while (true) {
             try {
 //                if ((msg = reader.readLine()) != null) {
-                    msg = reader.readLine();
-                    System.out.println(msg);
+                msg = reader.readLine();
+                System.out.println(msg);
 
-                    JsonObject msgJson = new JsonParser().parse(msg).getAsJsonObject();
-                    String messageContent = msgJson.get("clicked").getAsString();
+                JsonObject msgJson = new JsonParser().parse(msg).getAsJsonObject();
+                String messageContent = msgJson.get("clicked").getAsString();
 
-                    if (messageContent.equals("JOG")) {
-                        kernel.setIsJog(true);
-                    }
+                if (messageContent.equals("JOG")) {
+                    kernel.setIsJog(true);
+                }
 
-                    if (messageContent.equals("AUTO")) {
-                        kernel.setIsJog(false);
-                    }
+                if (messageContent.equals("AUTO")) {
+                    kernel.setIsJog(false);
+                }
 
-                    if (messageContent.equals("STEP")) {
-                        kernel.setIsStepped();
-                    }
+                if (messageContent.equals("STEP")) {
+                    kernel.setIsStepped();
+                }
 
-                    if (messageContent.equals("START")) {
-                        kernel.setProgExecuting(true);
-                    }
+                if (messageContent.equals("START")) {
+                    kernel.setProgExecuting(true);
+                }
 
-                    if (messageContent.equals("STOP")) {
-                        kernel.haveToStop = true;
-                        kernel.setProgExecuting(false);
-                    }
-                    kernel.setHaveToRefreshButtons(true);
+                if (messageContent.equals("STOP")) {
+                    kernel.haveToStop = true;
+                    kernel.setProgExecuting(false);
+                }
+                kernel.setHaveToRefreshButtons(true);
 //                }
             } catch (IOException ex) {
                 Logger.getLogger(RemoteControlTCPRdr.class.getName()).log(Level.SEVERE, null, ex);
